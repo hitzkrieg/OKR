@@ -13,11 +13,12 @@ from constants import NULL_VALUE
 from filter_propositions import filter_verbal, filter_non_verbal
 
 
-def compute_predicate_mention_agreement(graph1, graph2):
+def compute_predicate_mention_agreement(graph1, graph2, for_inter_annotator_agreement=True):
     """
     Compute predicate mention agreement on two graphs
-    :param graph1: the first annotator's graph
+    :param graph1: the first annotator's graph  
     :param graph2: the second annotator's graph
+    :param for_inter_annotator_agreement: boolean flag to be set to False if the method is called for evaluation between gold and predicted graphs
     :return predicate mention accuracy and the consensual graphs
     """
 
@@ -28,7 +29,12 @@ def compute_predicate_mention_agreement(graph1, graph2):
     accuracy1 = len(consensual_mentions) * 1.0 / len(graph1_prop_mentions) if len(graph1_prop_mentions) > 0 else 0.0
     accuracy2 = len(consensual_mentions) * 1.0 / len(graph2_prop_mentions) if len(graph1_prop_mentions) > 0 else 0.0
 
-    prop_mention_acc = (accuracy1 + accuracy2) / 2
+    if(for_inter_annotator_agreement==True):
+        prop_mention_acc = (accuracy1 + accuracy2) / 2 
+    else:
+        # accuracy1 is equivalent to recall and accuracy2 is equivalent to precision
+        prop_mention_acc = 2.00 * (accuracy1 * accuracy2)/ (accuracy1 + accuracy2) if (accuracy1 + accuracy2) > 0.0 else 0.0
+            
 
     consensual_graph1 = filter_mentions(graph1, consensual_mentions)
     consensual_graph2 = filter_mentions(graph2, consensual_mentions)
@@ -36,29 +42,31 @@ def compute_predicate_mention_agreement(graph1, graph2):
     return prop_mention_acc, consensual_graph1, consensual_graph2
 
 
-def compute_predicate_mention_agreement_verbal(graph1, graph2):
+def compute_predicate_mention_agreement_verbal(graph1, graph2, for_inter_annotator_agreement=True):
     """
     Compute predicate mention agreement only on verbal predicates
     :param graph1: the first annotator's graph
     :param graph2: the second annotator's graph
+    :param for_inter_annotator_agreement: boolean flag to be set to False if the method is called for evaluation between gold and predicted graphs
     :return predicate mention accuracy on verbal predicates
     """
     verbal_graph1 = filter_verbal(graph1)
     verbal_graph2 = filter_verbal(graph2)
-    accuracy, _, _ = compute_predicate_mention_agreement(verbal_graph1, verbal_graph2)
+    accuracy, _, _ = compute_predicate_mention_agreement(verbal_graph1, verbal_graph2, for_inter_annotator_agreement)
     return accuracy
 
 
-def compute_predicate_mention_agreement_non_verbal(graph1, graph2):
+def compute_predicate_mention_agreement_non_verbal(graph1, graph2, for_inter_annotator_agreement=True):
     """
     Compute predicate mention agreement only on non verbal predicates
     :param graph1: the first annotator's graph
     :param graph2: the second annotator's graph
+    :param for_inter_annotator_agreement: boolean flag to be set to False if the method is called for evaluation between gold and predicted graphs
     :return predicate mention accuracy on non verbal predicates
     """
     non_verbal_graph1 = filter_non_verbal(graph1)
     non_verbal_graph2 = filter_non_verbal(graph2)
-    accuracy, _, _ = compute_predicate_mention_agreement(non_verbal_graph1, non_verbal_graph2)
+    accuracy, _, _ = compute_predicate_mention_agreement(non_verbal_graph1, non_verbal_graph2, for_inter_annotator_agreement)
     return accuracy
 
 

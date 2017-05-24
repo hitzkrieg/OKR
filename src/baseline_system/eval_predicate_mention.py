@@ -32,7 +32,7 @@ def evaluate_predicate_mention(test_graphs, prop_ex, nom_file):
     :return the average predicate mention metric on the test graphs
     """
     pred_graphs = [predict_predicate_mention(test_graph, prop_ex, nom_file) for test_graph in test_graphs]
-    return np.mean([compute_predicate_mention_agreement(test_graph, pred_graph)[0]
+    return np.mean([compute_predicate_mention_agreement(test_graph, pred_graph, for_inter_annotator_agreement=False)[0]
                     for test_graph, pred_graph in zip(test_graphs, pred_graphs)])
 
 
@@ -46,7 +46,7 @@ def evaluate_predicate_mention_verbal(test_graphs, prop_ex):
     verbal_graphs = map(filter_verbal, test_graphs)
     pred_graphs = [predict_predicate_mention(verbal_graph, prop_ex, apply_non_verbal=False)
                    for verbal_graph in verbal_graphs]
-    return np.mean([compute_predicate_mention_agreement(test_graph, pred_graph)[0]
+    return np.mean([compute_predicate_mention_agreement(test_graph, pred_graph, for_inter_annotator_agreement=False)[0]
                     for test_graph, pred_graph in zip(verbal_graphs, pred_graphs)])
 
 
@@ -60,7 +60,7 @@ def evaluate_predicate_mention_non_verbal(test_graphs, prop_ex, nom_file):
     non_verbal_graphs = map(filter_non_verbal, test_graphs)
     pred_graphs = [predict_predicate_mention(non_verbal_graph, prop_ex, apply_verbal=False, nom_file=nom_file)
                    for non_verbal_graph in non_verbal_graphs]
-    return np.mean([compute_predicate_mention_agreement(test_graph, pred_graph)[0]
+    return np.mean([compute_predicate_mention_agreement(test_graph, pred_graph, for_inter_annotator_agreement=False)[0]
                     for test_graph, pred_graph in zip(non_verbal_graphs, pred_graphs)])
 
 
